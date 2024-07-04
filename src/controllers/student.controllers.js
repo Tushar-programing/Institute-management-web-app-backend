@@ -33,10 +33,10 @@ const create = asyncHandler(async(req, res) => {
 
 const getAllBranchStudents = asyncHandler(async(req, res) => {
     const {branchId} = req.params;
-    console.log(req?.user?._id, branchId);
+    // console.log(req?.user?._id, branchId);
 
     const students = await Student.find({branchName: req?.user?._id || branchId})
-    console.log(req?.user?._id, branchId);
+    // console.log(req?.user?._id, branchId);
 
     if (!students) {
         throw new ApiError(400, "no students found")
@@ -47,7 +47,27 @@ const getAllBranchStudents = asyncHandler(async(req, res) => {
     .json(new ApiResponse(200, students, "Students found successfully"))
 })
 
+const removeStudent = asyncHandler(async(req, res) => {
+    const {studentId} = req.params;
+    
+    if (!studentId) {
+        throw new ApiError(400, "Student Id is not found")
+    }
+
+    const remove = await Student.findByIdAndDelete(studentId)
+
+    if (!remove) {
+        throw new ApiError(400, "Unable to delete this student")
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, remove , "Student deleted successfully"))
+})
+
+
 export {
     create,
     getAllBranchStudents,
+    removeStudent,
 }
