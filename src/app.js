@@ -23,10 +23,13 @@ app.use(cookieParser())
 
 import branch from "./routes/branch.routes.js"
 import student from "./routes/student.routes.js"
+import batches from "./routes/batches.routes.js"
+import attendance from "./routes/attendance.routes.js"
 
 app.use("/api/v1/branch", branch)
 app.use("/api/v1/student", student)
-
+app.use("/api/v1/batches", batches)
+app.use("/api/v1/attendance", attendance)
 
 // app.use((err, req, res, next) => {
 //     if (err instanceof ApiError) {

@@ -13,6 +13,12 @@ const create = asyncHandler(async(req, res) => {
         throw new  ApiError(400, "All fields are required")
     }
 
+    const exist = await Student.findOne({email})
+
+    if (exist) {
+        throw new ApiError(400, "Students available with this email-id")
+    }
+
     const create =  await Student.create({
         name,
         email,
@@ -33,7 +39,7 @@ const create = asyncHandler(async(req, res) => {
 
 const getAllBranchStudents = asyncHandler(async(req, res) => {
     const {branchId} = req.params;
-    // console.log(req?.user?._id, branchId);
+    console.log(req?.user?._id, branchId);
 
     const students = await Student.find({branchName: req?.user?._id || branchId})
     // console.log(req?.user?._id, branchId);
@@ -45,6 +51,40 @@ const getAllBranchStudents = asyncHandler(async(req, res) => {
     return res
     .status(200)
     .json(new ApiResponse(200, students, "Students found successfully"))
+})
+
+const updateStudent = asyncHandler(async(req, res) => {
+    const {studentId} = req.params;
+
+    const {name, email, mobileNo, course} = req.body
+
+    console.log(name, email, mobileNo, course);
+
+    if (!name || !email || !mobileNo || !course) {
+        throw new  ApiError(400, "All fields are required")
+    }
+
+    const update = await Student.findByIdAndUpdate(
+        studentId,
+        {
+            $set: {
+                name,
+                email,
+                mobileNo,
+                course,
+            }
+        },
+        {new: true}
+    )
+
+    if (!update) {
+        throw new ApiError(400, "unable to update students")
+    }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200, update, "Student updated successfully"))
+
 })
 
 const removeStudent = asyncHandler(async(req, res) => {
@@ -70,4 +110,5 @@ export {
     create,
     getAllBranchStudents,
     removeStudent,
+    updateStudent,
 }

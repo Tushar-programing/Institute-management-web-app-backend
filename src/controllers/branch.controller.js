@@ -45,7 +45,7 @@ const registerBranch = asyncHandler(async(req, res) => {
     }
 
     return res
-    .status(200)
+    .status(200) 
     .json(new ApiResponse(200, create, "branch register successfully"))
 })
 
@@ -58,17 +58,26 @@ const loginBranch = asyncHandler(async(req, res) => {
         throw new ApiError(400, "all fields are required")
     }
 
+    console.log("working 3");
     const branch  = await Branch.findOne({userName})
+    console.log("working 4");
+
 
     if (!branch) {
         throw new ApiError(400, "Branch does not exist with this Branch Name")
     }
+    console.log("working 4");
+
 
     const isPasswordCorrect = await branch.isPasswordCorrect(password)
+
+    console.log("working 5");
 
     if (!isPasswordCorrect) {
         throw new ApiError(400, "your password is incorrect")
     }
+    console.log("working 6");
+
 
     const {accessToken, refreshToken} = await generateAccessAndRefreshTokens(branch._id)
 
@@ -114,7 +123,7 @@ const getCurrentUser = asyncHandler(async(req, res) => {
 
 
 const getAllBranchInfo = asyncHandler(async(req, res) => {
-
+    // console.log("this");
     if (req.admin) {
         const branches = await Branch.find().select("-password -refreshToken")
         if (branches.length < 0) {
@@ -134,8 +143,6 @@ const getAllBranchInfo = asyncHandler(async(req, res) => {
         .json(new ApiResponse(200, branch, "Branch fetched successfully"))
     }
 })
-
-
 
 
 export {
